@@ -5,7 +5,7 @@ const quotes = [
     {
         "id": 1,
         "author": "Oscar Wilde",
-        "quote": "Be yourself; everyone else is already taken."
+        "quote": "Be yourself, everyone else is already taken."
     },
     {
         "id": 2,
@@ -21,7 +21,7 @@ const quotes = [
 
 const app = express()
 app.use(cors())
-const port = 3000
+const port = 4000
 
 app.get('/', (req, res) => {
   res.send('Quotes but they are not here. Check the /quotes endpoint')
