@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 
-const quotes = [
+let quotes = [
     {
         id: 1,
         author: {
@@ -36,6 +36,7 @@ const quotes = [
 
 const app = express()
 app.use(cors())
+app.use(express.json())
 const port = 4000
 
 app.get('/', (req, res) => {
@@ -63,6 +64,39 @@ app.get('/randomBasketItem', (req, res) => {
     const randomIndex = Math.floor(Math.random() * quotes.length)
     res.send(quotes[randomIndex])
 })
+
+app.post('/quotes', (req, res) => {
+
+  let errors: any[] = []
+
+    if(typeof req.body.age !== 'number') errors.push('Age must be a number')
+
+    if(typeof req.body.quote !== 'string')  errors.push('Item is not a string')
+    if(typeof req.body.author.lastName !== 'string') errors.push('Last name not provided or not a string')
+    if(typeof req.body.author.firstName !== 'string') errors.push('First name not provided or not a string')
+    if(typeof req.body.author.image !== 'string') errors.push('Image not provided or not a string')
+
+    if (errors.length === 0){
+        const newQuote = {
+            id: quotes.length + 1,
+            author: {
+                firstName: req.body.author.firstName,
+                lastName: req.body.author.lastName,
+                age: req.body.author.age,
+                image: req.body.author.image
+            },
+            quote: req.body.quote
+        }
+        quotes.push(newQuote)
+        res.send(newQuote)
+    }
+    else {
+        res.status(400).send(errors)
+    }
+    
+})
+
+    
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
