@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 
-let quotes = [
+let quoteData = [
     {
         id: 1,
         author: {
@@ -34,6 +34,8 @@ let quotes = [
     }
 ]
 
+let quotes = quoteData
+
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -43,12 +45,38 @@ app.get('/', (req, res) => {
   res.send('Quotes but they are not here. Check the /quotes endpoint')
 })
 
-app.get('/quotes', (req, res) => {
-    let quotesToSend = quotes
-    if(req.query.age) {
-      quotesToSend = quotesToSend.filter(quote => quote.author.age === Number(req.query.age))
+app.delete('/quotes/:id', (req, res) => {
+    const id = Number(req.params.id)
+    quotes = quotes.filter(quote => quote.id !== id)
+    if(quotes.length === 0) {
+        res.status(404).send(`No quotes available.`)
+    } else {
+        res.send(`Quote with id ${id} has been deleted`)
     }
-    res.send(quotesToSend)
+})
+
+app.patch('/quotes/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const quoteMatch = quotes.find(quote => quote.id === id)
+    if(!quoteMatch) {
+        res.status(404).send(`No quote with id ${id}`)
+    } else {
+        if(req.body.author) {
+            quoteMatch.author = req.body.author
+        }
+        if(req.body.quote) {
+            quoteMatch.quote = req.body.quote
+        }
+        res.send(`Quote with id ${id} has been updated`)
+    }
+})
+
+app.get('/quotes', (req, res) => {
+    // let quotesToSend = quotes
+    // if(req.query.age) {
+    //   quotesToSend = quotesToSend.filter(quote => quote.author.age === Number(req.query.age))
+    // }
+    res.send(quotes)
 })
 
 app.get('/quotes/:id', (req, res) => {
