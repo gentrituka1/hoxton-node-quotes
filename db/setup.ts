@@ -39,9 +39,9 @@ function createQuoteStuff(){
 
     const createQuotesTable = db.prepare(`
         CREATE TABLE IF NOT EXISTS quotes (
-            id INTEGER,
-            author TEXT,
-            quote TEXT,
+            id INTEGER NOT NULL,
+            author TEXT NOT NULL,
+            quote TEXT NOT NULL,
             PRIMARY KEY (id)
         );
     `)
@@ -53,11 +53,11 @@ function createQuoteStuff(){
     deleteAllQuotes.run()
 
     const createQuote = db.prepare(`
-        INSERT INTO quotes (id, author, quote) VALUES (?, ?, ?);
+        INSERT INTO quotes (author, quote) VALUES (?, ?);
     `)
 
-    for(let quote of quotes) {
-        createQuote.run(quote.author, quote.quote)
+    for(let quote of quotes){
+        createQuote.run(quote.author.firstName, quote.quote)
     }
 
 }
